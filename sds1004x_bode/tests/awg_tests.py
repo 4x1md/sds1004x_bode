@@ -19,11 +19,11 @@ if __name__ == '__main__':
     #awg_name = "dummy"
     #baud = None
     
-    awg_name = "jds6600"
-    baud = 115200
+    #awg_name = "jds6600"
+    #baud = 115200
     
-    #awg_name = "bk4075"
-    #baud = 19200
+    awg_name = "bk4075"
+    baud = 19200
     
     awg_class = awg_factory.get_class_by_name(awg_name)
     
@@ -41,6 +41,7 @@ if __name__ == '__main__':
     # Channel 1: 257.86Hz, 1Vpp, offset 0.5V
     awg.set_wave_type(1, constants.SINE)
     awg.set_frequency(1, 7257.865243)
+    awg.set_load_impedance(1, 50)
     awg.set_amplitue(1, 0.722)
     awg.set_offset(1, 0.041)
     
@@ -48,6 +49,7 @@ if __name__ == '__main__':
         # Channel 2: 35564.0493Hz, 1.5Vpp, offset -0.35V
         awg.set_wave_type(2, constants.SINE)
         awg.set_frequency(2, 35564.0493)
+        awg.set_load_impedance(2, constants.HI_Z)
         awg.set_amplitue(2, 1.5)
         awg.set_offset(2, -0.35)
     except UnknownChannelError:

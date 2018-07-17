@@ -8,7 +8,7 @@ import serial
 import time
 from base_awg import BaseAWG
 import constants
-from exceptions import UnknownChannelError, NotSupportedError
+from exceptions import UnknownChannelError
 
 # Port settings
 BAUD_RATES = (2400, 4800, 9600, 19200)
@@ -38,7 +38,7 @@ DEFAULT_LOAD = 50
 DEFAULT_OUTPUT_ON = False
 
 # Output impedance of the AWG
-R_IN = 50
+R_IN = 50.0
 
 class BK4075(BaseAWG):
     '''
@@ -69,6 +69,7 @@ class BK4075(BaseAWG):
         self.connect()
         self.send_command("SYST:SCR ON")
         self.r_load = DEFAULT_LOAD
+        self.v_out_coeff = 1.0
         self.output_on = DEFAULT_OUTPUT_ON
         self.enable_output(1, self.output_on)
         
@@ -119,7 +120,7 @@ class BK4075(BaseAWG):
         
     def set_phase(self, phase):
         """
-        Once-channel AWG does not support setting phase.
+        BK4075 does not require setting phase.
         """
         pass
 
@@ -159,18 +160,8 @@ class BK4075(BaseAWG):
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         
-        """
-        BK4075 treats the requested amplitude as the amplitude which must be
-        obtained on a 50 Ohm load. Taking into account the internal impedance
-        of 50 Ohm, the actual output amplitude will be twice than the requested.
-        The oscilloscope sends the actual required amplitude and the chosen
-        load impedance.
-        Therefore, before sending the command to BK4075 the amplitude value
-        must be recalculated in order to obtain the required voltage on the
-        given load. 
-        """
-        coeff = 0.5 * (self.r_load + R_IN) / self.r_load 
-        amplitude = amplitude * coeff
+        # Adjust the amplitude to the defined load impedance
+        amplitude = amplitude * self.v_out_coeff
         
         amp_str = "%.3f" % amplitude
         cmd = ":VOLT:AMPL %s" % (amp_str)
@@ -191,18 +182,8 @@ class BK4075(BaseAWG):
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         
-        """
-        BK4075 treats the requested offset value as the voltage which must be
-        obtained on a 50 Ohm load. Taking into account the internal impedance
-        of 50 Ohm, the actual offset voltage will be twice than the requested.
-        The oscilloscope sends the actual required offset value and the chosen
-        load impedance.
-        Therefore, before sending the command to BK4075 the offset value
-        must be recalculated in order to obtain the required voltage on the
-        given load. 
-        """
-        coeff = 0.5 * (self.r_load + R_IN) / self.r_load 
-        offset = offset * coeff
+        # Adjust the offset voltage to match the defined load impedance 
+        offset = offset * self.v_out_coeff
         
         cmd = ":VOLT:OFFS %s" % (offset)
         self.send_command(cmd)
@@ -215,6 +196,26 @@ class BK4075(BaseAWG):
             raise UnknownChannelError(CHANNELS_ERROR)
         
         self.r_load = z
+        
+        """
+        The voltage amplitude which is requestd from the AWG by the
+        oscilloscope is the actual peak-to-peak amplitude.
+        The actual output of BK4075 is twice the defined value because it
+        supposes that it is loaded with 50 Ohm and half of the output voltage
+        will fall on the internal impedance which is also 50 Ohm.
+        If the connected load has other impedance, the output amplitude must
+        be adjusted.
+        For example, in order to obtain 1Vp-p on a Hi-Z load, the amplitude
+        defined on BK405 must be 0.5Vp-p. For other load impedances it must
+        be adjusted accordingly. 
+        v_out_coeff variable stores the coefficient by which the amplitude
+        defined by the oscilloscope will be multiplied before sending it
+        to the AWG. 
+        """
+        if self.r_load == constants.HI_Z:
+            self.v_out_coeff = 0.5
+        else:        
+            self.v_out_coeff = 0.5 * (self.r_load + R_IN) / self.r_load 
 
 if __name__ == '__main__':
     print "This module shouldn't be run. Run awg_tests.py instead."

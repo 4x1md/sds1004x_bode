@@ -114,7 +114,7 @@ class CommandParser(object):
 
             elif args[n] == "LOAD":
                 if args[n+1] == "HZ":
-                    z = float("inf")
+                    z = constants.HI_Z
                 else:
                     z = int(args[n+1]) 
                 self.awg.set_load_impedance(channel, z)

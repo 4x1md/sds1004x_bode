@@ -7,6 +7,7 @@ Created on Apr 24, 2018
 import serial
 import time
 from base_awg import BaseAWG
+import constants
 from exceptions import UnknownChannelError
 
 # Port settings constants
@@ -21,8 +22,11 @@ EOL = b'\x0D\x0A'
 # Channels validation tuple
 CHANNELS = (0, 1, 2)
 CHANNELS_ERROR = "Channel can be 1 or 2."
-# JDS6600 requires some delay between commands. 10msec seem to be enough.
+# JDS6600 requires some delay between commands. 15msec seem to be enough.
 SLEEP_TIME = 0.015
+
+# Output impedance of the AWG
+R_IN = 50.0
 
 class JDS6600(BaseAWG):
     '''
@@ -37,6 +41,7 @@ class JDS6600(BaseAWG):
         self.timeout = timeout
         self.channel_on = [False, False]
         self.r_load = [50, 50]
+        self.v_out_coeff = [1, 1]
     
     def connect(self):
         self.ser = serial.Serial(self.port, BAUD_RATE, BITS, PARITY, STOP_BITS, timeout=self.timeout)
@@ -55,7 +60,11 @@ class JDS6600(BaseAWG):
         self.enable_output()
     
     def get_id(self):
-        raise NotImplementedError()
+        self.send_command(":r01=0.")
+        ans = self.ser.read_until(terminator=".\r\n", size=None)
+        ans = ans.replace(":ok", "")
+        ans = ans.strip()
+        return ans.strip()
     
     def enable_output(self, channel=None, on=False):
         """
@@ -143,7 +152,7 @@ class JDS6600(BaseAWG):
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
-        if not wave_type in BaseAWG.WAVE_TYPES:
+        if not wave_type in constants.WAVE_TYPES:
             raise ValueError("Incorrect wave type.")
         
         # Channel 1
@@ -156,9 +165,6 @@ class JDS6600(BaseAWG):
             cmd = ":w22=%s." % wave_type
             self.send_command(cmd)
         
-#         cmd = ":w2%s=%s,0." % (channel + 1, wave_type)
-#         self.send_command(cmd)
-    
     def set_amplitue(self, channel, amplitude):
         """
         Sets amplitude of the selected channel.
@@ -170,6 +176,12 @@ class JDS6600(BaseAWG):
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
+        
+        """
+        Adjust the output amplitude to obtain the requested amplitude
+        on the defined load impedance.
+        """
+        amplitude = amplitude / self.v_out_coeff[channel-1] 
         
         amp_str = "%.3f" % amplitude
         amp_str = amp_str.replace(".", "")
@@ -183,9 +195,6 @@ class JDS6600(BaseAWG):
         if channel in (0, 2) or channel is None:
             cmd = ":w26=%s." % amp_str
             self.send_command(cmd)
-        
-#         cmd = ":w2%s=%s,0." % (channel + 4, amp_str)
-#         self.send_command(cmd)
     
     def set_offset(self, channel, offset):
         """
@@ -202,6 +211,9 @@ class JDS6600(BaseAWG):
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         
+        # Adjust the offset to the defined load impedance
+        offset = offset / self.v_out_coeff[channel-1] 
+        
         offset_val = 1000 + int(offset * 100)
         
         # Channel 1
@@ -214,10 +226,6 @@ class JDS6600(BaseAWG):
             cmd = ":w28=%s." % offset_val
             self.send_command(cmd)
         
-#         offset_val = 1000 + int(offset * 100)
-#         cmd = ":w2%s=%s,0." % (channel + 6, offset_val)
-#         self.send_command(cmd)
-        
     def set_load_impedance(self, channel, z):
         """
         Sets load impedance connected to each channel. Default value is 50 Ohms.
@@ -226,6 +234,20 @@ class JDS6600(BaseAWG):
             raise UnknownChannelError(CHANNELS_ERROR)
         
         self.r_load[channel-1] = z
+        
+        """
+        Vout coefficient defines how the requestd amplitude must be increased
+        in order to obtain the requested amplitude on the defined load.
+        If the load is Hi-Z, the amplitude must not be increased.
+        If the load is 50 Ohm, the amplitude has to be double of the requested
+        value, because of the voltage divider between the output impedance
+        and the load impedance.
+        """
+        if z == constants.HI_Z:
+            v_out_coeff = 1
+        else:
+            v_out_coeff = z / (z + R_IN)
+        self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':
     print "This module shouldn't be run. Run awg_tests.py instead."
