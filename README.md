@@ -117,7 +117,7 @@ I'd like to add here more AWGs but it's impossible to have them all at the home 
 
 ## Authors
 
-* **Dmitry Melnichansky @4x1md** - Project idea and implementation.
+* **Dmitry Melnichansky [@4x1md](https://github.com/4x1md)** - Project idea and implementation.
 
 * **Nick Bryant (Dundarave on EEVblog Forum)** - Driver for Feeltech FY6600 AWG.
 
