@@ -14,7 +14,7 @@ Current version of the program was tested under Linux only. Later, I'll test it 
 
 As of January 30, 2019 the program supports the following models:
 
-* **BK Precision BK4075** One channel AWG with maximum frequency of 25MHz. Requires a RS-232 serial port for the connection to a PC. It is compatible with the SCPI 1992.0 standard.
+* **BK Precision BK4075** One channel 25MHz AWG. Requires a RS-232 serial port for the connection to a PC. It is compatible with the SCPI 1992.0 standard.
 
 * **RD JDS6600** Chinese generator which is widely sold on eBay and AliExpress. It connects to the PC as a USB serial port.
 
