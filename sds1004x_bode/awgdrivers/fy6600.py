@@ -1,9 +1,9 @@
 '''
-Created on Apr 24, 2018
+Created on November 20, 2019
 
-@author: 4x1md
+@author: Dundarave
 
-Driver for JDS6600 AWG.
+Driver for FeelTech FY6600 AWG.
 '''
 
 import serial
@@ -19,22 +19,22 @@ PARITY = serial.PARITY_NONE
 STOP_BITS = serial.STOPBITS_ONE
 TIMEOUT = 5
 
-# Data packet ends with CR LF (\r\n) characters
-EOL = b'\x0D\x0A'
+# FY6600 Data packet ends with just a single LF (\n) character
+EOL = '\x0A'
 # Channels validation tuple
 CHANNELS = (0, 1, 2)
 CHANNELS_ERROR = "Channel can be 1 or 2."
-# JDS6600 requires some delay between commands. 15msec seem to be enough.
-SLEEP_TIME = 0.015
+# FY6600 requires some delay between commands. 0.5 seconds seems to work, .25 seconds is iffy. Your unit might need more.
+SLEEP_TIME = 0.5
 
 # Output impedance of the AWG
 R_IN = 50.0
 
-class JDS6600(BaseAWG):
+class FY6600(BaseAWG):
     '''
-    JDS6600 function generator driver.
+    FY6600 function generator driver.
     '''    
-    SHORT_NAME = "jds6600"
+    SHORT_NAME = "fy6600"
 
     def __init__(self, port, baud_rate=BAUD_RATE, timeout=TIMEOUT):
         """baud_rate parameter is ignored."""
@@ -62,23 +62,22 @@ class JDS6600(BaseAWG):
         self.enable_output()
     
     def get_id(self):
-        self.send_command(":r01=0.")
-        ans = self.ser.read_until(terminator=".\r\n", size=None)
-        ans = ans.replace(":ok", "")
-        ans = ans.strip()
-        return ans.strip()
-    
+        self.send_command("UID")
+        ans = self.ser.read_until(terminator="\r\n", size=None)
+        return ans
+
     def enable_output(self, channel=None, on=False):
         """
         Turns channels output on or off.
         The channel is defined by channel variable. If channel is None, both channels are set.
         
-        Commands
-            :w20=0,0.
-            :w20=0,1.
-            :w20=1,1.
-        enable outputs of channels 1, 2 and of both accordingly.
-        
+        Commands:        
+            WMN1 means main wave output set to on
+            WMN0 means main wave output set to off
+            WFN1 means second channel wave output set to on
+            WFN0 means second channel wave output set to off
+
+        Separate commands are thus needed to set the channels for the FY6600.
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
@@ -90,63 +89,67 @@ class JDS6600(BaseAWG):
         
         ch1 = "1" if self.channel_on[0] == True else "0"
         ch2 = "1" if self.channel_on[1] == True else "0"
-        cmd = ":w20=%s,%s." % (ch1, ch2)
+        
+        # The fy6600 uses separate commands to enable each channel.
+        cmd = "WMN%s" % (ch1)
         self.send_command(cmd)
-    
+        cmd = "WFN%s" % (ch2)
+        self.send_command(cmd)
+
     def set_frequency(self, channel, freq):
         """
         Sets frequency on the selected channel.
         
-        Command examples:
-            :w23=25786,0.
-                sets the output frequency of channel 1 to 2578.6Hz.
-            :w23=25786,1.
-                sets the output frequency of channel 1 to 2578.6kHz.
-            :w24=25786,3.
-                sets the output frequency of channel 2 to 25.786mHz.
+        Command examples:        
+            WMF00000000000001 equals 1 uHz on channel 1
+            WMF00000001000000 equals 1 Hz on channel 1
+            WMF00001000000000 equals 1 kHz on channel 1
+            WFF00000000000001 equals 1 uHz on channel 2
+            and so on.
         """
+        
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         
         freq_str = "%.2f" % freq
         freq_str = freq_str.replace(".", "")
-
+        freq_str = freq_str + "0000"
+       
         # Channel 1
         if channel in (0, 1) or channel is None:
-            cmd = ":w23=%s,0." % freq_str
+            cmd = "WMF%s" % freq_str
             self.send_command(cmd)
         
         # Channel 2
-        if channel in (0, 2) or channel is None:
-            cmd = ":w24=%s,0." % freq_str
+        if channel in (0, 2) :
+            cmd = "WFF%s" % freq_str
             self.send_command(cmd)
+        
         
     def set_phase(self, phase):
         """
         Sends the phase setting command to the generator.
         The phase is set on channel 2 only.
         
-        Commands
-            :w31=100. 
-            :w31=360.
-        sets the phase to 10 and 0 degrees accordingly.
-        For negative values 360 degrees are considered zero point.
+        Commands:
+            WMP100.0 is 100.0 degrees on Channel 1
+            WFP4.9 is 4.9 degrees on Channel 2. We are only setting phase on channel 2 here.
         """
         if phase < 0:
             phase += 360
-        phase = int(round(phase * 10))
-        cmd = ":w31=%s." % (phase)
+
+        cmd = "WFP%s" % (phase)
         self.send_command(cmd)
 
     def set_wave_type(self, channel, wave_type):
         """
         Sets wave type of the selected channel.
         
-        Commands
-            :w21=0.
-            :w22=0.
-        set wave forms of channels 1 and 2 accordingly to sine wave.
-        """
+        Commands:
+            WMW00 for Sine wave channel 1
+            WFW00 for Sine wave channel 2
+        Both commands are "hard-coded".
+       """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         if not wave_type in constants.WAVE_TYPES:
@@ -154,22 +157,21 @@ class JDS6600(BaseAWG):
         
         # Channel 1
         if channel in (0, 1) or channel is None:
-            cmd = ":w21=%s." % wave_type
+            cmd = "WMW00"
             self.send_command(cmd)
         
         # Channel 2
         if channel in (0, 2) or channel is None:
-            cmd = ":w22=%s." % wave_type
+            cmd = "WFW00"
             self.send_command(cmd)
         
     def set_amplitue(self, channel, amplitude):
         """
         Sets amplitude of the selected channel.
         
-        Commands
-            :w25=30.
-            :w26=30.
-        set amplitudes of channel 1 and channel 2 accordingly to 0.03V.
+        Commands:
+            WMA0.44 for 0.44 volts Channel 1
+            WFA9.87 for 9.87 volts Channel 2
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
@@ -179,18 +181,16 @@ class JDS6600(BaseAWG):
         on the defined load impedance.
         """
         amplitude = amplitude / self.v_out_coeff[channel-1] 
-        
         amp_str = "%.3f" % amplitude
-        amp_str = amp_str.replace(".", "")
         
         # Channel 1
         if channel in (0, 1) or channel is None:
-            cmd = ":w25=%s." % amp_str
+            cmd = "WMA%s" % amp_str
             self.send_command(cmd)
         
         # Channel 2
         if channel in (0, 2) or channel is None:
-            cmd = ":w26=%s." % amp_str
+            cmd = "WFA%s" % amp_str
             self.send_command(cmd)
     
     def set_offset(self, channel, offset):
@@ -198,29 +198,22 @@ class JDS6600(BaseAWG):
         Sets DC offset of the selected channel.
         
         Command examples:
-            :w27=9999.    
-                sets the offset of channel 1 to 9.99V.
-            :w27=1000. 
-                sets the offset of channel 1 to 0V.
-            :w28=1. 
-                sets the offset of channel 2 to -9.99V.
+        WMO0.33 sets channel 1 offset to 0.33 volts
+        WFO-3.33sets channel 2 offset to -3.33 volts
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
-        
         # Adjust the offset to the defined load impedance
         offset = offset / self.v_out_coeff[channel-1] 
         
-        offset_val = 1000 + int(offset * 100)
-        
         # Channel 1
         if channel in (0, 1) or channel is None:
-            cmd = ":w27=%s." % offset_val
+            cmd = "WMO%s" % offset
             self.send_command(cmd)
         
         # Channel 2
         if channel in (0, 2) or channel is None:
-            cmd = ":w28=%s." % offset_val
+            cmd = "WFO%s" % offset
             self.send_command(cmd)
         
     def set_load_impedance(self, channel, z):

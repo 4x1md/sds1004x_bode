@@ -2,6 +2,8 @@
 Created on Apr 24, 2018
 
 @author: 4x1md
+
+Driver for BK Precision BK4075 AWG.
 '''
 
 import serial
