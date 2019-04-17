@@ -10,6 +10,7 @@ from awgdrivers.dummy_awg import DummyAWG
 from awgdrivers.jds6600 import JDS6600
 from awgdrivers.bk4075 import BK4075
 from awgdrivers.fy6600 import FY6600
+from awgdrivers.fy3200s import FY3200S
 
 class AwgFactory(object):
     
@@ -28,4 +29,5 @@ awg_factory.add_awg(DummyAWG.SHORT_NAME, DummyAWG)
 awg_factory.add_awg(JDS6600.SHORT_NAME, JDS6600)
 awg_factory.add_awg(BK4075.SHORT_NAME, BK4075)
 awg_factory.add_awg(FY6600.SHORT_NAME, FY6600)
+awg_factory.add_awg(FY3200S.SHORT_NAME, FY3200S)
 

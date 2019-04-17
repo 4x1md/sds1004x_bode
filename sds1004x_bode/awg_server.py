@@ -82,12 +82,12 @@ class AwgServer(object):
         Makes all required initializations and starts the server.
         """
         
-        print "Starting AWG server..."
-        print "Listening on %s" % (self.host)
-        print "RPCBIND on port %s" % (self.rpcbind_port)
-        print "VXI-11 on port %s" % (self.vxi11_port)
+        print ("Starting AWG server...")
+        print ("Listening on %s" % (self.host))
+        print ("RPCBIND on port %s" % (self.rpcbind_port))
+        print ("VXI-11 on port %s" % (self.vxi11_port))
         
-        print "Creating sockets..."
+        print ("Creating sockets...")
         # Create RPCBIND socket
         self.rpcbind_socket = self.create_socket(self.host, self.rpcbind_port)
         # Create VXI-11 socket
@@ -110,10 +110,10 @@ class AwgServer(object):
         # Run the VXI-11 server
         while True:
             # VXI-11 requests are processed after receiving a valid RPCBIND request.
-            print "\nWaiting for connection request..."
+            print ("\nWaiting for connection request...")
             res = self.process_rpcbind_request()
             if res != OK:
-                print "Incompatible RPCBIND request."
+                print ("Incompatible RPCBIND request.")
                 continue
             self.process_lxi_requests()
         self.close_lxi_sockets()
@@ -127,7 +127,7 @@ class AwgServer(object):
         connection, address = self.rpcbind_socket.accept()
         rx_data = connection.recv(128)
         if len(rx_data) > 0:
-            print "\nIncoming connection from %s:%s." % (address[0], address[1])
+            print ("\nIncoming connection from %s:%s." % (address[0], address[1]))
             # Validate the request.
             ## If the request is not GETPORT or does not come from VXI-11 Core (395183),
             ## we have nothing to do wit it
@@ -154,13 +154,13 @@ class AwgServer(object):
                 status, vxi11_procedure, scpi_command = self.parse_lxi_request(rx_buf)
                 
                 if status == NOT_VXI11_ERROR:
-                    print "Received VXI-11 request from an unknown source."
+                    print ("Received VXI-11 request from an unknown source.")
                     break
                 elif status == UNKNOWN_COMMAND_ERROR:
-                    print "Unknown VXI-11 request received. Procedure id %s" % (vxi11_procedure)
+                    print ("Unknown VXI-11 request received. Procedure id %s" % (vxi11_procedure))
                     break
                 
-                print "VXI-11 %s, SCPI command: %s" % (LXI_PROCEDURES[vxi11_procedure], scpi_command)
+                print ("VXI-11 %s, SCPI command: %s" % (LXI_PROCEDURES[vxi11_procedure], scpi_command))
                 
                 # Process the received VXI-11 request
                 if vxi11_procedure == CREATE_LINK:
@@ -249,7 +249,7 @@ class AwgServer(object):
             pass
         else:
             status = UNKNOWN_COMMAND_ERROR
-            print "Unknown VXI-11 command received. Code %s" % (vxi11_procedure)
+            print ("Unknown VXI-11 command received. Code %s" % (vxi11_procedure))
         
         return (status, vxi11_procedure, str(scpi_command).strip())
     
@@ -374,7 +374,7 @@ class AwgServer(object):
         buf_str = ""
         for b in buf:
             buf_str += "0x%X " % ord(b)
-        print buf_str
+        print (buf_str)
     
     def close_rpcbind_sockets(self):
         """
