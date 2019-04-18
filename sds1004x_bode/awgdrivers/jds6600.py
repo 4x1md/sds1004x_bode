@@ -247,4 +247,4 @@ class JDS6600(BaseAWG):
         self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':
-    print "This module shouldn't be run. Run awg_tests.py instead."
+    print ("This module shouldn't be run. Run awg_tests.py instead.")

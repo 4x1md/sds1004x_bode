@@ -34,7 +34,7 @@ class FY3200S(BaseAWG):
     '''
     FY3200s function generator driver.
     '''    
-    SHORT_NAME = "fy3200S"
+    SHORT_NAME = "fy3200s"
 
     def __init__(self, port, baud_rate=BAUD_RATE, timeout=TIMEOUT):
         """baud_rate parameter is ignored."""
@@ -54,11 +54,11 @@ class FY3200S(BaseAWG):
     def send_command(self, channel, cmd):
         # Channel 1
         if channel in (0, 1) or channel is None:
-            self.ser.write("b%s\n" % cmd)
+            self.ser.write(("b%s\n" % cmd).encode())
             time.sleep(SLEEP_TIME)
         # Channel 2
         if channel in (0, 2) or channel is None:
-            self.ser.write("d%s\n" % cmd)
+            self.ser.write(("d%s\n" % cmd).encode())
             time.sleep(SLEEP_TIME)
 
         
@@ -68,7 +68,7 @@ class FY3200S(BaseAWG):
         self.enable_output()
     
     def get_id(self):
-        self.send_command("a")
+        self.ser.write("a\n".encode())
         ans = self.ser.read_until(terminator="\r\n", size=None)
         return ans
 
@@ -76,14 +76,6 @@ class FY3200S(BaseAWG):
         """
         Turns channels output on or off.
         The channel is defined by channel variable. If channel is None, both channels are set.
-        
-        Commands:        
-            WMN1 means main wave output set to on
-            WMN0 means main wave output set to off
-            WFN1 means second channel wave output set to on
-            WFN0 means second channel wave output set to off
-
-        Separate commands are thus needed to set the channels for the FY6600.
         """
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
@@ -93,14 +85,15 @@ class FY3200S(BaseAWG):
         else:
             self.channel_on = [on, on]
         
-        ch1 = "1" if self.channel_on[0] == True else "0"
-        ch2 = "1" if self.channel_on[1] == True else "0"
-        
-        # The fy6600 uses separate commands to enable each channel.
-        cmd = "WMN%s" % (ch1)
-        self.send_command(cmd)
-        cmd = "WFN%s" % (ch2)
-        self.send_command(cmd)
+        if self.channel_on[0] == True:
+            self.set_amplitue(1,1.0)
+        else:
+            self.set_amplitue(1,0)
+
+        if self.channel_on[1] == True:
+            self.set_amplitue(2,1.0)
+        else:
+            self.set_amplitue(2,0)
 
     def set_frequency(self, channel, freq):
         """
@@ -202,4 +195,4 @@ class FY3200S(BaseAWG):
         self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':
-    print "This module shouldn't be run. Run awg_tests.py instead."
+    print ("This module shouldn't be run. Run awg_tests.py instead.")

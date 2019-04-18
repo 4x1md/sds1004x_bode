@@ -220,4 +220,4 @@ class BK4075(BaseAWG):
             self.v_out_coeff = 0.5 * (self.r_load + R_IN) / self.r_load 
 
 if __name__ == '__main__':
-    print "This module shouldn't be run. Run awg_tests.py instead."
+    print ("This module shouldn't be run. Run awg_tests.py instead.")
