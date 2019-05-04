@@ -18,7 +18,7 @@ As of January 30, 2019 the program supports the following models:
 
 * **RD JDS6600** Chinese generator which is widely sold on eBay and AliExpress. It connects to the PC as a USB serial port.
 
-* **Feeltech FY6600** Another Chinese generator which is widely sold on eBay and AliExpress. It also connects to the PC as a USB serial port. 
+* **Feeltech FY6600** Another Chinese generator which is widely sold on eBay and AliExpress. It also connects to the PC as a USB serial port.
 
 ## Program Structure
 TBD
@@ -62,7 +62,7 @@ Creating sockets...
 Waiting for connection request...
 ```
 
-After starting the program, follow the usual procedure of creating Bode plot. After starting the plotting, the program output you'll see will be similar to the following:
+After starting the program, follow the usual procedure of creating Bode plot. After starting the plotting, the program output will be similar to the following:
 
 ```
 Incoming connection from 192.168.14.27:55916.
@@ -110,6 +110,10 @@ VXI-11 DESTROY_LINK, SCPI command: None
 ### 2018-07-18
 
 * The first version of the program was uploaded to GitHub.
+
+## Follow-up Projects
+
+* [espBode](https://github.com/PanKaczka/espBode) by [Jakub Stępniewicz SQ6SFO](https://github.com/PanKaczka) - an interface between a Siglent SDS1004X-E oscilloscope and FY6800 AWG implemented on ESP-01 module.
 
 ## Contributing
 
