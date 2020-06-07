@@ -20,7 +20,7 @@ As of June 7, 2020 the program supports the following models:
 
 * **Feeltech FY6600** Another Chinese generator which is widely sold on eBay and AliExpress. It also connects to the PC as a USB serial port.
 
-* **Picoscope 3000a series** It connects to the PC usb support and their is an API that needs downloading from Picotech. Tested with Picoscope 3205 MSO only.
+* **Picoscope 3000a series** A UK made USB scope that includes a basic function generator/AWG in some models. There is an API that needs downloading from Picotech, also their python wrappers are needed. Tested with the Picoscope 3205 MSO only but should work with other models.
 
 ## Program Structure
 TBD
