@@ -131,6 +131,8 @@ I'd like to add here more AWGs but it's impossible to have them all at the home 
 
 * **Nick Bryant (Dundarave on EEVblog Forum)** - Driver for Feeltech FY6600 AWG.
 
+* **Mark Watson** - Driver for Picoscope 3205 MSO.
+
 ## Links
 
 1. [Siglent SDS1104X-E and SDS1204X-E: Bode plot with non-Siglent AWG](http://www.eevblog.com/forum/testgear/siglent-sds1104x-e-and-sds1204x-e-bode-plot-with-non-siglent-awg/) on EEVblog Forum.
