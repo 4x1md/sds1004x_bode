@@ -25,19 +25,6 @@ WAVEFORM_COMMANDS = {
     }
 # Output impedance of the AWG
 R_IN = 600.0
-#typedef enum enPS3000AWaveType
-#{
-#  PS3000A_SINE,
-#  PS3000A_SQUARE,
-#  PS3000A_TRIANGLE,
-#  PS3000A_RAMP_UP,
-#  PS3000A_RAMP_DOWN,
-#  PS3000A_SINC,
-#  PS3000A_GAUSSIAN,
-#  PS3000A_HALF_SINE,
-#  PS3000A_DC_VOLTAGE,
-#  PS3000A_MAX_WAVE_TYPES
-#} PS3000A_WAVE_TYPE;
 
 class ps3000a(BaseAWG):
     '''
@@ -76,7 +63,6 @@ class ps3000a(BaseAWG):
                 raise
         
             assert_pico_ok(status["ChangePowerSource"])
-        print ("Connected")
     
     def disconnect(self):
         status = {}
@@ -99,34 +85,11 @@ class ps3000a(BaseAWG):
     def enable_output(self, channel, on):
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
-# handle = chandle
-# offsetVoltage = 0
-# pkToPk = 2000000
-# waveType = ctypes.c_int16(0) = PS3000A_SINE
-# startFrequency = 10000 Hz
-# stopFrequency = 10000 Hz
-# increment = 0
-# dwellTime = 1
-# sweepType = ctypes.c_int16(1) = PS3000A_UP
-# operation = 0
-# shots = 0
-# sweeps = 0
-# triggerType = ctypes.c_int16(0) = PS3000A_SIGGEN_RISING
-# triggerSource = ctypes.c_int16(0) = P3000A_SIGGEN_NONE
-# extInThreshold = 1
         sweepType = ctypes.c_int32(0)
         triggertype = ctypes.c_int32(0)
         triggerSource = ctypes.c_int32(0)
         status = {}
 
-#        print("offset,amplitude,wavetype,frequency\n")
-#        print(self.offsetVoltage)
-#        print(self.amplitude)
-#        print(self.wavetype)
-#        print(self.frequency)
-        print("amplitude:" + str(self.amplitude))
-        print("offset:" + str(self.offsetVoltage))
-        print("v_out_coeff:" + str(self.v_out_coeff))
         amplitude = ctypes.c_uint32(int(round(self.amplitude*1000000/self.v_out_coeff)))
         offsetVoltage = ctypes.c_int32(int(round(self.offsetVoltage*1000000/self.v_out_coeff)))
         if on:
@@ -145,8 +108,6 @@ class ps3000a(BaseAWG):
         self.enable_output(channel,self.onoff)
         
     def set_phase(self, phase):
- #       if channel is not None and channel not in CHANNELS:
- #           raise UnknownChannelError(CHANNELS_ERROR)
         pass
 
     def set_wave_type(self, channel, wave_type):
@@ -174,7 +135,6 @@ class ps3000a(BaseAWG):
             v_out_coeff = 1
         else:
             v_out_coeff = z / (z + R_IN)
-        print ("Z:" + str(z))
         self.v_out_coeff = v_out_coeff
         self.enable_output(channel,self.onoff)
         pass
