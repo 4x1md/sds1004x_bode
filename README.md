@@ -12,13 +12,15 @@ Current version of the program was tested under Linux only. Later, I'll test it 
 
 ## Supported AWG Models
 
-As of January 30, 2019 the program supports the following models:
+As of June 7, 2020 the program supports the following models:
 
 * **BK Precision BK4075** One channel 25MHz AWG. Requires a RS-232 serial port for the connection to a PC. It is compatible with the SCPI 1992.0 standard.
 
 * **RD JDS6600** Chinese generator which is widely sold on eBay and AliExpress. It connects to the PC as a USB serial port.
 
 * **Feeltech FY6600** Another Chinese generator which is widely sold on eBay and AliExpress. It also connects to the PC as a USB serial port.
+
+* **Picoscope 3000a series** It connects to the PC usb support and their is an API that needs downloading from Picotech. Tested with Picoscope 3205 MSO only.
 
 ## Program Structure
 TBD
