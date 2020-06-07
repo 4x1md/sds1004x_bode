@@ -4,12 +4,14 @@ Created on May 15, 2018
 @author: 4x1md
 
 Update of original file on Nov. 17 2018 by Dundarave to add entries needed for FY6600 support.
+Update of original file on Jun. 7 2020 by Mark Watson to add entries needed for ps3000a support.
 '''
 
 from awgdrivers.dummy_awg import DummyAWG
 from awgdrivers.jds6600 import JDS6600
 from awgdrivers.bk4075 import BK4075
 from awgdrivers.fy6600 import FY6600
+from awgdrivers.ps3000a import ps3000a
 
 class AwgFactory(object):
     
@@ -28,4 +30,5 @@ awg_factory.add_awg(DummyAWG.SHORT_NAME, DummyAWG)
 awg_factory.add_awg(JDS6600.SHORT_NAME, JDS6600)
 awg_factory.add_awg(BK4075.SHORT_NAME, BK4075)
 awg_factory.add_awg(FY6600.SHORT_NAME, FY6600)
+awg_factory.add_awg(ps3000a.SHORT_NAME, ps3000a)
 
