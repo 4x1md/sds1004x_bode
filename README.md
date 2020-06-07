@@ -105,6 +105,10 @@ VXI-11 DESTROY_LINK, SCPI command: None
 
 ## Changelog
 
+### 2020-06-07
+
+* Support for the Picoscope 3205 MSO
+
 ### 2019-01-30
 
 * The program supports Feeltech FY6600 AWG.
