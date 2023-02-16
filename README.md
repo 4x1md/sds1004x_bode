@@ -137,7 +137,7 @@ You are more than welcome to contact me with any questions, suggestions or propo
 2. Visit [my Facebook profile](https://www.facebook.com/Dima.Meln)
 3. :email: Write me an email to iosaaris =at= gmail dot com
 
-## A Coffee?
+## Say Thanks
 
 If you like this project, or found here some useful information and want to say thanks, or encourage me to do more, you can buy me a coffee!
 
