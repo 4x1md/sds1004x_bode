@@ -149,4 +149,6 @@ You can aslo make a donation with PayPal:
 
 [!["Donate with PayPal"](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=NZZWZFH5ZBCCU)
 
-73 de 4X1MD
+---
+
+**73 de 4X1MD**
