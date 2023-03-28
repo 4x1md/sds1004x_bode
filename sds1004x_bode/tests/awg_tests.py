@@ -22,8 +22,11 @@ if __name__ == '__main__':
     #awg_name = "jds6600"
     #baud = 115200
     
-    awg_name = "fy6600"
-    baud = 19200
+    awg_name = "fy"
+    baud = 115200
+
+    #awg_name = "fy6600"
+    #baud = 19200
     
     #awg_name = "bk4075"
     #baud = 19200
