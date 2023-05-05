@@ -5,12 +5,14 @@ Created on Apr 24, 2018
 
 Driver for JDS6600 AWG.
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 
 import serial
 import time
-from base_awg import BaseAWG
-import constants
-from exceptions import UnknownChannelError
+from .base_awg import BaseAWG
+from . import constants
+from .exceptions import UnknownChannelError
 
 # Port settings constants
 BAUD_RATE = 115200
@@ -247,4 +249,4 @@ class JDS6600(BaseAWG):
         self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':
-    print "This module shouldn't be run. Run awg_tests.py instead."
+    print("This module shouldn't be run. Run awg_tests.py instead.")

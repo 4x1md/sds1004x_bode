@@ -5,6 +5,7 @@ Created on May 4, 2018
 
 @note: Tests the command_parser.py module.
 '''
+from __future__ import print_function
 
 from sds1004x_bode.command_parser import CommandParser
 from sds1004x_bode.awgdrivers.dummy_awg import DummyAWG
@@ -22,7 +23,7 @@ if __name__ == '__main__':
     
     for line in lines:
         line = line.strip()
-        print line
+        print(line)
         if line == "":
             continue
         parser.parse_scpi_command(line)

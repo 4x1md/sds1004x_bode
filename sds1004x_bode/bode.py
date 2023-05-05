@@ -3,10 +3,12 @@ Created on May 5, 2018
 
 @author: dima
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 
 import sys
-from awg_server import AwgServer
-from awg_factory import awg_factory
+from .awg_server import AwgServer
+from .awg_factory import awg_factory
 
 DEFAULT_AWG = "dummy"
 DEFAULT_PORT = "/dev/ttyUSB0"
@@ -32,9 +34,9 @@ if __name__ == '__main__':
         awg_baud_rate = DEFAULT_BAUD_RATE  
     
     # Initialize AWG
-    print "Initializing AWG..."
-    print "AWG: %s" % awg_name
-    print "Port: %s" % awg_port
+    print("Initializing AWG...")
+    print("AWG: %s" % awg_name)
+    print("Port: %s" % awg_port)
     awg_class = awg_factory.get_class_by_name(awg_name)
     awg = awg_class(awg_port, awg_baud_rate)
     awg.initialize()
@@ -52,5 +54,5 @@ if __name__ == '__main__':
         if server is not None:
             server.close_sockets()
     
-    print "Bye."
+    print("Bye.")
     

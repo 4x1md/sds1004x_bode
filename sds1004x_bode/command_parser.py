@@ -3,8 +3,9 @@ Created on May 4, 2018
 
 @author: 4x1md
 '''
+from __future__ import absolute_import
 
-from awgdrivers import constants
+from .awgdrivers import constants
 
 class CommandParser(object):
     """
