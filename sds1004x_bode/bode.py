@@ -7,8 +7,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import sys
-from .awg_server import AwgServer
-from .awg_factory import awg_factory
+from awg_server import AwgServer
+from awg_factory import awg_factory
 
 DEFAULT_AWG = "dummy"
 DEFAULT_PORT = "/dev/ttyUSB0"

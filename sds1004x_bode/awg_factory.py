@@ -7,10 +7,10 @@ Update of original file on Nov. 17 2018 by Dundarave to add entries needed for F
 '''
 from __future__ import absolute_import
 
-from .awgdrivers.dummy_awg import DummyAWG
-from .awgdrivers.jds6600 import JDS6600
-from .awgdrivers.bk4075 import BK4075
-from .awgdrivers.fy6600 import FY6600
+from awgdrivers.dummy_awg import DummyAWG
+from awgdrivers.jds6600 import JDS6600
+from awgdrivers.bk4075 import BK4075
+from awgdrivers.fy6600 import FY6600
 
 class AwgFactory(object):
     

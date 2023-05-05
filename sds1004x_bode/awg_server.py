@@ -8,8 +8,8 @@ from __future__ import absolute_import
 
 import sys
 import socket
-from .awgdrivers.base_awg import BaseAWG
-from .command_parser import CommandParser
+from awgdrivers.base_awg import BaseAWG
+from command_parser import CommandParser
 
 # Host and ports to use.
 ## Setting host to 0.0.0.0 will bind the incoming connections to any interface.
