@@ -5,7 +5,11 @@ Created on Apr 14, 2018
 '''
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
 
+from builtins import str
+from builtins import object
+from past.utils import old_div
 import sys
 import socket
 from awgdrivers.base_awg import BaseAWG
@@ -361,9 +365,9 @@ class AwgServer(object):
         """
         Converts a 32-bit integer to a sequence of 4 bytes. Byte 0 is MSB.
         """
-        byte3 = (num / 0x1000000) & 0xFF
-        byte2 = (num / 0x10000) & 0xFF
-        byte1 = (num / 0x100) & 0xFF
+        byte3 = (old_div(num, 0x1000000)) & 0xFF
+        byte2 = (old_div(num, 0x10000)) & 0xFF
+        byte1 = (old_div(num, 0x100)) & 0xFF
         byte0 = num & 0xFF
         bytes_seq = bytearray((byte3, byte2, byte1, byte0))
         return bytes_seq

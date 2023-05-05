@@ -5,6 +5,7 @@ Created on May 4, 2018
 '''
 from __future__ import absolute_import
 
+from builtins import object
 from awgdrivers import constants
 
 class CommandParser(object):
