@@ -251,7 +251,6 @@ class AwgServer(object):
             status = UNKNOWN_COMMAND_ERROR
             print("Unknown VXI-11 command received. Code %s" % (vxi11_procedure))
             
-        print("scpi_command %s" % (scpi_command))
         return (status, vxi11_procedure, str(scpi_command.decode()).strip())
     
     def get_xid(self, rx_packet):
@@ -351,13 +350,9 @@ class AwgServer(object):
         Converts a sequence of 4 bytes to 32-bit integer. Byte 0 is MSB.
         """
         mybytes = bytearray(bytes_seq)
-        # num = ord(bytes_seq[0])
         num = mybytes[0]
-        # num = num * 0x100 + ord(bytes_seq[1])
         num = num * 0x100 + mybytes[1]      
-        # num = num * 0x100 + ord(bytes_seq[2])
         num = num * 0x100 + mybytes[2]        
-        # num = num * 0x100 + ord(bytes_seq[3])
         num = num * 0x100 + mybytes[3]        
         return num
     
