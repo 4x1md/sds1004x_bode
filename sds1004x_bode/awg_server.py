@@ -26,7 +26,7 @@ VXI11_PORT = 703
 # AWG ID to send to the oscilloscope
 ## Examples: SDG SDG2042X SDG0000X SDG2000X
 ## The ID should begin with SDG letters.
-AWG_ID_STRING = "IDN-SGLT-PRI SDG0000X"
+AWG_ID_STRING = b"IDN-SGLT-PRI SDG0000X"
 
 # RPC/VXI-11 procedure ids
 GET_PORT = 3
