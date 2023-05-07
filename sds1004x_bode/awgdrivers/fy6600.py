@@ -56,8 +56,8 @@ class FY6600(BaseAWG):
         self.ser.close()
         
     def send_command(self, cmd):
-        self.ser.write(cmd)
-        self.ser.write(EOL)
+        self.ser.write(cmd.encode())
+        self.ser.write(EOL.encode())
         time.sleep(SLEEP_TIME)
         
     def initialize(self):

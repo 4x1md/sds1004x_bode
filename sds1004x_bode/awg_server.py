@@ -239,7 +239,7 @@ class AwgServer(object):
         
         # Procedure: CREATE_LINK (10), DESTROY_LINK (23), DEVICE_WRITE (11), DEVICE_READ (12)
         vxi11_procedure = self.bytes_to_uint(rx_data[0x18:0x1c])
-        scpi_command = None
+        scpi_command = b""
         status = OK
         
         # Process the remaining data according to the received VXI-11 request
@@ -256,8 +256,9 @@ class AwgServer(object):
         else:
             status = UNKNOWN_COMMAND_ERROR
             print("Unknown VXI-11 command received. Code %s" % (vxi11_procedure))
-        
-        return (status, vxi11_procedure, str(scpi_command).strip())
+            
+        print("scpi_command %s" % (scpi_command))
+        return (status, vxi11_procedure, str(scpi_command.decode()).strip())
     
     def get_xid(self, rx_packet):
         """
@@ -295,20 +296,20 @@ class AwgServer(object):
         Generates RPC header for replying to oscilloscope's requests.
         @param xid: XID from the request packet as bytes sequence.
         """ 
-        hdr = ""
+        hdr = b""
         # XID: 0xXXXXXXXX (4 bytes)
         hdr += xid
         # Message Type: Reply (1)
-        hdr += "\x00\x00\x00\x01"
+        hdr += b"\x00\x00\x00\x01"
         # Reply State: accepted (0)
-        hdr += "\x00\x00\x00\x00"
+        hdr += b"\x00\x00\x00\x00"
         # Verifier
         ## Flavor: AUTH_NULL (0)
-        hdr += "\x00\x00\x00\x00"
+        hdr += b"\x00\x00\x00\x00"
         ## Length: 0
-        hdr += "\x00\x00\x00\x00"
+        hdr += b"\x00\x00\x00\x00"
         # Accept State: RPC executed successfully (0)
-        hdr += "\x00\x00\x00\x00"
+        hdr += b"\x00\x00\x00\x00"
         return hdr
 
     # =========================================================================
@@ -324,27 +325,27 @@ class AwgServer(object):
         """Generates reply to VXI-11 CREATE_LINK request.""" 
         # VXI-11 response
         ## Error Code: No Error (0)
-        resp = "\x00\x00\x00\x00"
+        resp = b"\x00\x00\x00\x00"
         ## Link ID: 0
-        resp += "\x00\x00\x00\x00"
+        resp += b"\x00\x00\x00\x00"
         ## Abort Port: 0
-        resp += "\x00\x00\x00\x00"
+        resp += b"\x00\x00\x00\x00"
         ## Maximum Receive Size: 8388608=0x00800000
         #resp += self.uint_to_bytes(8388608)
-        resp += "\x00\x80\x00\x00"
+        resp += b"\x00\x80\x00\x00"
         return resp
 
     def generate_lxi_idn_response(self, id_string):
         ## Error Code: No Error (0)
-        resp = "\x00\x00\x00\x00"
+        resp = b"\x00\x00\x00\x00"
         # Reason: 0x00000004 (END)
-        resp += "\x00\x00\x00\x04"
+        resp += b"\x00\x00\x00\x04"
         # Add the AWG id string
         id_length = len(id_string) + 3
         resp += self.uint_to_bytes(id_length)
         resp += id_string
         # The sequence ends with \n and two \0 termination bytes.
-        resp += "\x0A\x00\x00"
+        resp += b"\x0A\x00\x00"
         return resp
 
     # =========================================================================
@@ -355,10 +356,15 @@ class AwgServer(object):
         """
         Converts a sequence of 4 bytes to 32-bit integer. Byte 0 is MSB.
         """
-        num = ord(bytes_seq[0])
-        num = num * 0x100 + ord(bytes_seq[1])
-        num = num * 0x100 + ord(bytes_seq[2])
-        num = num * 0x100 + ord(bytes_seq[3])
+        mybytes = bytearray(bytes_seq)
+        # num = ord(bytes_seq[0])
+        num = mybytes[0]
+        # num = num * 0x100 + ord(bytes_seq[1])
+        num = num * 0x100 + mybytes[1]      
+        # num = num * 0x100 + ord(bytes_seq[2])
+        num = num * 0x100 + mybytes[2]        
+        # num = num * 0x100 + ord(bytes_seq[3])
+        num = num * 0x100 + mybytes[3]        
         return num
     
     def uint_to_bytes(self, num):
