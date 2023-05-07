@@ -5,11 +5,7 @@ Created on Apr 24, 2018
 
 Driver for BK Precision BK4075 AWG.
 '''
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
 
-from past.utils import old_div
 import serial
 import time
 from .base_awg import BaseAWG
@@ -221,7 +217,7 @@ class BK4075(BaseAWG):
         if self.r_load == constants.HI_Z:
             self.v_out_coeff = 0.5
         else:        
-            self.v_out_coeff = old_div(0.5 * (self.r_load + R_IN), self.r_load) 
+            self.v_out_coeff = 0.5 * (self.r_load + R_IN) / self.r_load 
 
 if __name__ == '__main__':
     print("This module shouldn't be run. Run awg_tests.py instead.")

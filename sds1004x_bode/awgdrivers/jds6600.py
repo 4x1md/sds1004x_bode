@@ -5,11 +5,7 @@ Created on Apr 24, 2018
 
 Driver for JDS6600 AWG.
 '''
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
 
-from past.utils import old_div
 import serial
 import time
 from .base_awg import BaseAWG
@@ -182,7 +178,7 @@ class JDS6600(BaseAWG):
         Adjust the output amplitude to obtain the requested amplitude
         on the defined load impedance.
         """
-        amplitude = old_div(amplitude, self.v_out_coeff[channel-1]) 
+        amplitude = amplitude / self.v_out_coeff[channel-1] 
         
         amp_str = "%.3f" % amplitude
         amp_str = amp_str.replace(".", "")
@@ -213,7 +209,7 @@ class JDS6600(BaseAWG):
             raise UnknownChannelError(CHANNELS_ERROR)
         
         # Adjust the offset to the defined load impedance
-        offset = old_div(offset, self.v_out_coeff[channel-1]) 
+        offset = offset / self.v_out_coeff[channel-1] 
         
         offset_val = 1000 + int(offset * 100)
         
@@ -247,7 +243,7 @@ class JDS6600(BaseAWG):
         if z == constants.HI_Z:
             v_out_coeff = 1
         else:
-            v_out_coeff = old_div(z, (z + R_IN))
+            v_out_coeff = z / (z + R_IN)
         self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':

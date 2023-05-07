@@ -4,7 +4,6 @@ Created on Apr 24, 2018
 @author: 4x1md
 '''
 
-from builtins import object
 class BaseAWG(object):
     '''
     Base class defining arbitrary waveform generator and its functionality.

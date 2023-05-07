@@ -3,7 +3,6 @@ Created on Apr 24, 2018
 
 @author: 4x1md
 '''
-from __future__ import absolute_import
 
 from .base_awg import BaseAWG
 

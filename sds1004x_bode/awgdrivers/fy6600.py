@@ -5,11 +5,8 @@ Created on November 20, 2019
 
 Driver for FeelTech FY6600 AWG.
 '''
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
 
-from past.utils import old_div
+
 import serial
 import time
 from .base_awg import BaseAWG
@@ -184,7 +181,7 @@ class FY6600(BaseAWG):
         Adjust the output amplitude to obtain the requested amplitude
         on the defined load impedance.
         """
-        amplitude = old_div(amplitude, self.v_out_coeff[channel-1]) 
+        amplitude = amplitude / self.v_out_coeff[channel-1] 
         amp_str = "%.3f" % amplitude
         
         # Channel 1
@@ -208,7 +205,7 @@ class FY6600(BaseAWG):
         if channel is not None and channel not in CHANNELS:
             raise UnknownChannelError(CHANNELS_ERROR)
         # Adjust the offset to the defined load impedance
-        offset = old_div(offset, self.v_out_coeff[channel-1]) 
+        offset = offset / self.v_out_coeff[channel-1] 
         
         # Channel 1
         if channel in (0, 1) or channel is None:
@@ -240,7 +237,7 @@ class FY6600(BaseAWG):
         if z == constants.HI_Z:
             v_out_coeff = 1
         else:
-            v_out_coeff = old_div(z, (z + R_IN))
+            v_out_coeff = z / (z + R_IN)
         self.v_out_coeff[channel-1] = v_out_coeff
     
 if __name__ == '__main__':
