@@ -3,12 +3,7 @@ Created on Apr 14, 2018
 
 @author: 4x1md
 '''
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
 
-from builtins import str
-from builtins import object
 import sys
 import socket
 from awgdrivers.base_awg import BaseAWG
