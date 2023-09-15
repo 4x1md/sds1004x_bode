@@ -12,13 +12,15 @@ Current version of the program was tested under Linux only. Later, I'll test it 
 
 ## Supported AWG Models
 
-As of January 30, 2019 the program supports the following models:
+As of June 7, 2020 the program supports the following models:
 
 * **BK Precision BK4075** One channel 25MHz AWG. Requires a RS-232 serial port for the connection to a PC. It is compatible with the SCPI 1992.0 standard.
 
 * **RD JDS6600** Chinese generator which is widely sold on eBay and AliExpress. It connects to the PC as a USB serial port.
 
 * **Feeltech FY6600** Another Chinese generator which is widely sold on eBay and AliExpress. It also connects to the PC as a USB serial port.
+
+* **Picoscope 3000a series** A UK made USB scope that includes a basic function generator/AWG in some models. There is an API that needs downloading from Picotech, also their python wrappers are needed. Tested with the Picoscope 3205 MSO only but should work with other models.
 
 ## Program Structure
 TBD
@@ -103,6 +105,10 @@ VXI-11 DESTROY_LINK, SCPI command: None
 
 ## Changelog
 
+### 2020-06-07
+
+* Support for the Picoscope 3205 MSO
+
 ### 2019-01-30
 
 * The program supports Feeltech FY6600 AWG.
@@ -124,6 +130,8 @@ I'd like to add here more AWGs but it's impossible to have them all at the home 
 * **Dmitry Melnichansky [@4x1md](https://github.com/4x1md)** - Project idea and implementation.
 
 * **Nick Bryant (Dundarave on EEVblog Forum)** - Driver for Feeltech FY6600 AWG.
+
+* **Mark Watson** - Driver for Picoscope 3205 MSO.
 
 ## Links
 
